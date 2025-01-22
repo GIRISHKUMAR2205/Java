@@ -1,0 +1,25 @@
+Hotel Management System (HMS)
+
+Singleton Pattern
+It can handles global operations like room allocation, booking, and checking availability. 
+We ensure that the hotel manager's state is consistent across all users by using a Singleton pattern.
+
+Factory Method Pattern
+Creating Different Types of Rooms
+Single,Double,VIP
+
+Observer Pattern
+Multiple customers need to be notified when a room becomes available, or when their booking is confirmed. 
+The Observer pattern allows customers to register for notifications when certain events occur, like room availability.
+
+Strategy Pattern
+A hotel offers various payment methods (credit card, PayPal, cash), and the system needs to handle payments using different algorithms. 
+The Strategy pattern allows different payment methods.
+
+ Decorator Pattern
+The hotel offers basic rooms, but customers may choose to add additional services such as breakfast, WiFi, or a minibar.
+ The Decorator pattern allows adding these services .
+
+Multithreading 
+We can handle multiple users using services like booking,check-out,cancelling the rooms.
+
