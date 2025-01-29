@@ -1,0 +1,212 @@
+@startuml
+
+' Enumerations
+enum BookingStatus {
+    Requested
+    Pending
+    Confirmed
+    Checked-in
+    Checked-out
+    Abandoned
+}
+
+enum SeatType {
+    Regular
+    Premium
+    Accessible
+    EmergencyExit
+    Other
+}
+
+enum AccountStatus {
+    Active
+    Closed
+    Canceled
+    Blacklisted
+    Blocked
+}
+
+enum PaymentStatus {
+    Unpaid
+    Pending
+    Completed
+    Failed
+    Declined
+    Canceled
+    Abandoned
+    Settling
+    Settled
+    Refunded
+}
+
+' Data Types
+class Address {
+    streetAddress: string
+    city: string
+    state: string
+    zipcode: string
+    country: string
+}
+
+' Interfaces
+interface Search {
+    SearchByTitle(title)
+    SearchByLanguage(language)
+    SearchByGenre(genre)
+    SearchByReleaseDate(relDate)
+    SearchByCity(cityName)
+}
+
+' Classes
+class Account {
+    id: string
+    password: string
+    status: AccountStatus
+    resetPassword(): bool
+}
+
+class Guest {
+    registerAccount(): bool
+}
+Guest -|> Account
+
+class Person {
+    name: string
+    address: Address
+    email: string
+    phone: string
+}
+
+class Admin {
+    addMovie(): bool
+    addShow(): bool
+    blockUser(): bool
+}
+Admin -|> Person
+
+class Customer {
+    makeBooking(): bool
+    getBookings(): list<Booking>
+}
+Customer -|> Person
+
+class FrontDeskOfficer {
+    createBooking(): bool
+}
+FrontDeskOfficer -|> Person
+
+class Catalog {
+    lastUpdated: date
+    movieTitles: Map<string, list<Movie>>
+    movieLanguages: Map<string, list<Movie>>
+    movieGenres: Map<string, list<Movie>>
+    movieReleaseDates: Map<string, list<Movie>>
+    movieCities: Map<string, list<Movie>>
+}
+
+class Movie {
+    title: string
+    description: string
+    durationMins: int
+    language: string
+    releaseDate: datetime
+    country: string
+    genre: string
+    getShows(): list<Show>
+}
+Catalog "1" *-- "many" Movie
+
+class Show {
+    createdOn: date
+    startTime: datetime
+    endTime: datetime
+}
+Movie "1" *-- "many" Show
+
+class Cinema {
+    name: string
+    totalCinemaHalls: int
+    location: Address
+}
+Cinema "1" *-- "many" Show
+
+class CinemaHall {
+    name: string
+    totalSeats: int
+}
+Cinema "1" *-- "many" CinemaHall
+
+class CinemaHallSeat {
+    seatRow: int
+    seatColumn: int
+    type: SeatType
+}
+CinemaHall "1" *-- "many" CinemaHallSeat
+
+class City {
+    name: string
+    state: string
+    zipCode: string
+}
+City "1" *-- "many" Cinema
+
+class Booking {
+    bookingNumber: string
+    numberOfSeats: int
+    createdOn: date
+    status: BookingStatus
+    cancel(): bool
+}
+Customer "1" *-- "many" Booking
+FrontDeskOfficer "1" *-- "many" Booking
+
+class ShowSeat {
+    seatNumber: int
+    isReserved: bool
+    price: double
+}
+Booking "1" *-- "many" ShowSeat
+
+class Payment {
+    amount: double
+    createdOn: date
+    paymentStatus: PaymentStatus
+    transactionID: int
+}
+Booking "1" *-- "1" Payment
+
+class CreditCardTransaction {
+    nameOnCard: string
+}
+CreditCardTransaction -|> Payment
+
+class CashTransaction {
+    cashTendered: double
+}
+CashTransaction -|> Payment
+
+class Coupon {
+    id: int
+    balance: double
+    expiry: datetime
+}
+Payment "1" *-- "0..1" Coupon
+
+class Notification {
+    notificationId: int
+    createdOn: date
+    content: string
+    sendNotification(): bool
+}
+
+class EmailNotification {
+    email: string
+}
+EmailNotification -|> Notification
+
+class SmsNotification {
+    phone: string
+}
+SmsNotification -|> Notification
+
+@enduml
